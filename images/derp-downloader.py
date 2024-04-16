@@ -9,19 +9,19 @@ from urllib3.exceptions import InsecureRequestWarning
 import concurrent.futures
 
 import time
-# InsecureRequestWarning 경고 비활성화
+# 경고 무시
 warnings.simplefilter('ignore', InsecureRequestWarning)
 
-# 사용자 설정
-download_folders = ["twilight sparkle", "applejack", "fluttershy", "pinkie pie", "rainbow dash", "rarity", "princess celestia", "princess luna", "sunset shimmer", "derpy hooves", "maud pie", "starlight glimmer", "trixie"]  # 다운로드 폴더를 변경하세요.
-start_index = 2210325    # 시작 이미지 번호
+# 설정
+download_folders = ["twilight sparkle", "applejack", "fluttershy", "pinkie pie", "rainbow dash", "rarity", "princess celestia", "princess luna", "sunset shimmer", "derpy hooves", "maud pie", "starlight glimmer", "trixie"]
+start_index = 300    # 시작 이미지 번호
 # start_index = 186000    # 시작 이미지 번호
-end_index = 4882475     # 종료 이미지 번호
-required_tags_list = [["twilight sparkle", "safe", "solo"], ["applejack", "safe", "solo"], ["fluttershy", "safe", "solo"], ["pinkie pie", "safe", "solo"], ["rainbow dash", "safe", "solo"], ["princess celestia", "safe", "solo"], ["princess luna", "safe", "solo"], ["sunset shimmer", "safe", "solo"], ["derpy hooves", "safe", "solo"], ["maud pie", "safe", "solo"], ["starlight glimmer", "safe", "solo"], ["trixie", "safe", "solo"]]
+end_index = 40000     # 종료 이미지 번호
+required_tags_list = [["twilight sparkle", "solo"], ["applejack", "solo"], ["fluttershy", "solo"], ["pinkie pie", "solo"], ["rainbow dash", "solo"], ["princess celestia", "solo"], ["princess luna", "solo"], ["sunset shimmer", "solo"], ["derpy hooves", "solo"], ["maud pie", "solo"], ["starlight glimmer", "solo"], ["trixie", "safe", "solo"]] # 포함 태그
 banned_tags = []  # 거르는 태그 
 upvote = 10
 
-sleep_time = 7
+sleep_time = 7 # 5~6부터는 종종 막히는듯
 
 def download_image(url, image_path):
     session = requests.Session()
@@ -59,7 +59,7 @@ def get_and_download_image(number, download_folders, required_tags_list, banned_
         image_tags = [tag.get('data-tag-name') for tag in tags_elements]
 
         
-       # 이미지 URL 확인 및 다운로드 로직 시작 
+       # 이미지 URL 확인 및 다운로드
         center_aligned = soup.find(class_="layout--center-aligned")
         wide_layout = center_aligned.find(class_="layout--wide") if center_aligned else None
         header_block = wide_layout.find(class_="block block__header") if wide_layout else None
@@ -114,7 +114,7 @@ def download_images(download_folders, start_index, end_index, required_tags_list
         if not os.path.exists(folder):
             os.makedirs(folder)
     
-    # 병렬 다운로드 시작
+    # 병렬
     with ThreadPoolExecutor() as executor:
         futures = []
         for i in range(start_index,end_index+1):
@@ -123,5 +123,4 @@ def download_images(download_folders, start_index, end_index, required_tags_list
         for future in concurrent.futures.as_completed(futures):
             pass
 
-# 이미지 다운로드 시작
 download_images(download_folders,start_index,end_index ,required_tags_list,banned_tags)
